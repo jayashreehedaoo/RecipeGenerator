@@ -1,0 +1,23 @@
+{
+  "user": {
+    "id": "u1",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "preferences": {
+      "dietaryRestrictions": ["vegetarian"],
+      "allergies": ["peanuts", "shellfish"],
+      "favoriteCuisines": ["Italian", "Mexican", "Asian"],
+      "dislikedIngredients": ["cilantro", "mushrooms"],
+      "servingsDefault": 4,
+      "shoppingDay": "Sunday",
+      "lowStockThreshold": 0.2,
+      "expiryWarningDays": 3
+    },
+    "notificationSettings": {
+      "expiryAlerts": true,
+      "lowStockAlerts": true,
+      "shoppingReminders": true,
+      "recipesSuggestions": true
+    }
+  }
+}

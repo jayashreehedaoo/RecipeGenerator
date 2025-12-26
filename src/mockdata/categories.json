@@ -1,0 +1,79 @@
+{
+  "ingredientCategories": [
+    {
+      "id": "cat1",
+      "name": "Vegetables",
+      "icon": "🥕",
+      "color": "green"
+    },
+    {
+      "id": "cat2",
+      "name": "Fruits",
+      "icon": "🍎",
+      "color": "red"
+    },
+    {
+      "id": "cat3",
+      "name": "Protein",
+      "icon": "🍗",
+      "color": "orange"
+    },
+    {
+      "id": "cat4",
+      "name": "Dairy",
+      "icon": "🥛",
+      "color": "blue"
+    },
+    {
+      "id": "cat5",
+      "name": "Grains",
+      "icon": "🌾",
+      "color": "yellow"
+    },
+    {
+      "id": "cat6",
+      "name": "Oils",
+      "icon": "🫒",
+      "color": "amber"
+    },
+    {
+      "id": "cat7",
+      "name": "Spices",
+      "icon": "🌶️",
+      "color": "red"
+    },
+    {
+      "id": "cat8",
+      "name": "Beverages",
+      "icon": "☕",
+      "color": "brown"
+    }
+  ],
+  "recipeCategories": [
+    {
+      "id": "rcat1",
+      "name": "Breakfast",
+      "icon": "🍳"
+    },
+    {
+      "id": "rcat2",
+      "name": "Lunch",
+      "icon": "🥗"
+    },
+    {
+      "id": "rcat3",
+      "name": "Dinner",
+      "icon": "🍽️"
+    },
+    {
+      "id": "rcat4",
+      "name": "Snacks",
+      "icon": "🍿"
+    },
+    {
+      "id": "rcat5",
+      "name": "Desserts",
+      "icon": "🍰"
+    }
+  ]
+}

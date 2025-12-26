@@ -1,0 +1,85 @@
+{
+  "shoppingLists": [
+    {
+      "id": "sl1",
+      "scheduledFor": "2025-12-29",
+      "completed": false,
+      "createdAt": "2025-12-23",
+      "items": [
+        {
+          "id": "sli1",
+          "name": "Chicken Breast",
+          "quantity": 2,
+          "unit": "kg",
+          "category": "Protein",
+          "purchased": false,
+          "estimatedPrice": 18.50
+        },
+        {
+          "id": "sli2",
+          "name": "Milk",
+          "quantity": 3,
+          "unit": "L",
+          "category": "Dairy",
+          "purchased": false,
+          "estimatedPrice": 4.50
+        },
+        {
+          "id": "sli3",
+          "name": "Bread",
+          "quantity": 2,
+          "unit": "loaves",
+          "category": "Grains",
+          "purchased": true,
+          "estimatedPrice": 5.00
+        },
+        {
+          "id": "sli4",
+          "name": "Tomatoes",
+          "quantity": 10,
+          "unit": "pieces",
+          "category": "Vegetables",
+          "purchased": false,
+          "estimatedPrice": 8.00
+        },
+        {
+          "id": "sli5",
+          "name": "Yogurt",
+          "quantity": 1,
+          "unit": "kg",
+          "category": "Dairy",
+          "purchased": false,
+          "estimatedPrice": 6.50
+        }
+      ],
+      "totalEstimatedCost": 42.50
+    },
+    {
+      "id": "sl2",
+      "scheduledFor": "2025-12-22",
+      "completed": true,
+      "createdAt": "2025-12-16",
+      "items": [
+        {
+          "id": "sli6",
+          "name": "Eggs",
+          "quantity": 12,
+          "unit": "pieces",
+          "category": "Protein",
+          "purchased": true,
+          "estimatedPrice": 4.00
+        },
+        {
+          "id": "sli7",
+          "name": "Butter",
+          "quantity": 500,
+          "unit": "g",
+          "category": "Dairy",
+          "purchased": true,
+          "estimatedPrice": 7.50
+        }
+      ],
+      "totalEstimatedCost": 11.50
+    }
+  ]
+}

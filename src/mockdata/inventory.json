@@ -1,0 +1,184 @@
+{
+  "inventory": [
+    {
+      "id": "1",
+      "name": "Chicken Breast",
+      "quantity": 1.5,
+      "unit": "kg",
+      "category": "Protein",
+      "expiryDate": "2025-12-28",
+      "addedDate": "2025-12-20"
+    },
+    {
+      "id": "2",
+      "name": "Tomatoes",
+      "quantity": 6,
+      "unit": "pieces",
+      "category": "Vegetables",
+      "expiryDate": "2025-12-26",
+      "addedDate": "2025-12-21"
+    },
+    {
+      "id": "3",
+      "name": "Milk",
+      "quantity": 2,
+      "unit": "L",
+      "category": "Dairy",
+      "expiryDate": "2025-12-25",
+      "addedDate": "2025-12-22"
+    },
+    {
+      "id": "4",
+      "name": "Eggs",
+      "quantity": 12,
+      "unit": "pieces",
+      "category": "Protein",
+      "expiryDate": "2026-01-05",
+      "addedDate": "2025-12-18"
+    },
+    {
+      "id": "5",
+      "name": "Rice",
+      "quantity": 5,
+      "unit": "kg",
+      "category": "Grains",
+      "expiryDate": "2026-06-15",
+      "addedDate": "2025-11-10"
+    },
+    {
+      "id": "6",
+      "name": "Onions",
+      "quantity": 1,
+      "unit": "kg",
+      "category": "Vegetables",
+      "expiryDate": "2026-01-10",
+      "addedDate": "2025-12-15"
+    },
+    {
+      "id": "7",
+      "name": "Garlic",
+      "quantity": 200,
+      "unit": "g",
+      "category": "Vegetables",
+      "expiryDate": "2026-01-20",
+      "addedDate": "2025-12-15"
+    },
+    {
+      "id": "8",
+      "name": "Olive Oil",
+      "quantity": 750,
+      "unit": "ml",
+      "category": "Oils",
+      "expiryDate": "2026-08-30",
+      "addedDate": "2025-10-05"
+    },
+    {
+      "id": "9",
+      "name": "Cheddar Cheese",
+      "quantity": 400,
+      "unit": "g",
+      "category": "Dairy",
+      "expiryDate": "2025-12-30",
+      "addedDate": "2025-12-19"
+    },
+    {
+      "id": "10",
+      "name": "Carrots",
+      "quantity": 1.2,
+      "unit": "kg",
+      "category": "Vegetables",
+      "expiryDate": "2026-01-02",
+      "addedDate": "2025-12-20"
+    },
+    {
+      "id": "11",
+      "name": "Spinach",
+      "quantity": 300,
+      "unit": "g",
+      "category": "Vegetables",
+      "expiryDate": "2025-12-24",
+      "addedDate": "2025-12-22"
+    },
+    {
+      "id": "12",
+      "name": "Ground Beef",
+      "quantity": 500,
+      "unit": "g",
+      "category": "Protein",
+      "expiryDate": "2025-12-25",
+      "addedDate": "2025-12-23"
+    },
+    {
+      "id": "13",
+      "name": "Potatoes",
+      "quantity": 3,
+      "unit": "kg",
+      "category": "Vegetables",
+      "expiryDate": "2026-02-15",
+      "addedDate": "2025-12-10"
+    },
+    {
+      "id": "14",
+      "name": "Bell Peppers",
+      "quantity": 4,
+      "unit": "pieces",
+      "category": "Vegetables",
+      "expiryDate": "2025-12-27",
+      "addedDate": "2025-12-21"
+    },
+    {
+      "id": "15",
+      "name": "Pasta",
+      "quantity": 1,
+      "unit": "kg",
+      "category": "Grains",
+      "expiryDate": "2026-09-01",
+      "addedDate": "2025-09-15"
+    },
+    {
+      "id": "16",
+      "name": "Butter",
+      "quantity": 250,
+      "unit": "g",
+      "category": "Dairy",
+      "expiryDate": "2026-01-15",
+      "addedDate": "2025-12-18"
+    },
+    {
+      "id": "17",
+      "name": "Bread",
+      "quantity": 2,
+      "unit": "loaves",
+      "category": "Grains",
+      "expiryDate": "2025-12-24",
+      "addedDate": "2025-12-23"
+    },
+    {
+      "id": "18",
+      "name": "Yogurt",
+      "quantity": 500,
+      "unit": "g",
+      "category": "Dairy",
+      "expiryDate": "2025-12-29",
+      "addedDate": "2025-12-20"
+    },
+    {
+      "id": "19",
+      "name": "Salmon Fillet",
+      "quantity": 600,
+      "unit": "g",
+      "category": "Protein",
+      "expiryDate": "2025-12-26",
+      "addedDate": "2025-12-23"
+    },
+    {
+      "id": "20",
+      "name": "Broccoli",
+      "quantity": 500,
+      "unit": "g",
+      "category": "Vegetables",
+      "expiryDate": "2025-12-26",
+      "addedDate": "2025-12-22"
+    }
+  ]
+}
