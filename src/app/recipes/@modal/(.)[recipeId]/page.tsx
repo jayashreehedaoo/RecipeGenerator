@@ -24,6 +24,7 @@ export default function RecipeModalPage({
 
   const toggleSave = (id: string) => {
     console.log("Toggle save in modal:", id);
+    // TODO: Lift this state up or use context for global state
   };
 
   if (!recipe) return null;
