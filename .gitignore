@@ -33,6 +33,16 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# npm config (contains CBA Artifactory credentials)
+.npmrc
+
+# database files
+*.db
+*.db-*
+
+# test files
+test-db.ts
+
 # vercel
 .vercel
 
