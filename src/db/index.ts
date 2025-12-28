@@ -12,7 +12,8 @@ export async function getDb() {
 
   // Create libsql client
   const client = createClient({
-    url: 'file:./dev.db',
+    url: process.env.DATABASE_URL || 'file:./dev.db',
+    authToken: process.env.DATABASE_AUTH_TOKEN,
   });
 
   // Create Drizzle instance
