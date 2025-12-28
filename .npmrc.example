@@ -1,0 +1,10 @@
+# Local .npmrc for CBA development
+# This file is git-ignored and won't be committed
+
+# Use public npm registry (recommended for this project)
+registry=https://registry.npmjs.org/
+
+# OR if you need CBA Artifactory for other internal packages:
+# registry=https://artifactory.internal.cba/api/npm/dp-npm-new
+# always-auth = true
+# //artifactory.internal.cba/api/npm/:_auth=${ARTIFACTORY_ENTERPRISE_NPM_AUTH}

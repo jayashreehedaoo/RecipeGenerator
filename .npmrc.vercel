@@ -1,4 +1,0 @@
-strict-peer-dependencies=false
-legacy-peer-deps=true
-# This is specifically for Vercel deployment
-# Local development uses the .npmrc with Artifactory

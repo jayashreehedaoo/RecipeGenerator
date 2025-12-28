@@ -2,7 +2,23 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+### Development Environment Setup
+
+This project uses **public npm packages** and can be deployed to Vercel. If you're developing locally within a corporate network (CBA), you may need to configure npm:
+
+**Option 1: Use Public npm Registry (Recommended)**
+```bash
+# No .npmrc needed - npm uses public registry by default
+npm install
+```
+
+**Option 2: Use Corporate Artifactory (CBA Internal)**
+```bash
+# Create a local .npmrc file (git-ignored)
+# Copy from .npmrc.example and configure with your credentials
+```
+
+### Run Development Server
 
 ```bash
 npm run dev
