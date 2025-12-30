@@ -1,12 +1,16 @@
-import { Recipe } from "@/types/recipe";
+import { Recipe } from "@/types/recipe-generator";
 import React from "react";
 
 const CardInfo = ({
   recipe,
   toggleSave,
+  onEdit,
+  onDelete,
 }: {
   recipe: Recipe;
   toggleSave: (id: string) => void;
+  onEdit?: (recipe: Recipe) => void;
+  onDelete?: (id: string) => void;
 }) => {
   return (
     <div className="p-4">
@@ -41,6 +45,36 @@ const CardInfo = ({
           </span>
         )}
       </div>
+
+      {/* Action Buttons */}
+      {(onEdit || onDelete) && (
+        <div className="mt-4 flex gap-2 pt-3 border-t">
+          {onEdit && (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onEdit(recipe);
+              }}
+              className="flex-1 px-3 py-1.5 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition-colors"
+            >
+              ✏️ Edit
+            </button>
+          )}
+          {onDelete && (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onDelete(recipe.id);
+              }}
+              className="flex-1 px-3 py-1.5 bg-red-500 text-white text-sm rounded hover:bg-red-600 transition-colors"
+            >
+              🗑️ Delete
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import RecipeModal from "@/components/Recipe/RecipeModal";
-import { Recipe } from "@/types/recipe";
+import { Recipe } from "@/types/recipe-generator";
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 

@@ -49,3 +49,11 @@ test-db.ts
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Database files
+dev.db
+dev.db-shm
+dev.db-wal
+*.db
+*.db-shm
+*.db-wal

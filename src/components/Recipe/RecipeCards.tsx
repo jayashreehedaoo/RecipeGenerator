@@ -1,16 +1,18 @@
-import { Recipe } from "@/types/recipe";
+import { Recipe } from "@/types/recipe-generator";
 import RecipeCard from "./RecipeCards/RecipeCard";
 import Link from "next/link";
-
-interface RecipeCardsProps {
-  recipes: Recipe[];
-  toggleSave: (id: string) => void;
-}
 
 const RecipeCards = ({
   recipes,
   toggleSave,
-}: RecipeCardsProps) => {
+  onEdit,
+  onDelete,
+}: {
+  recipes: Recipe[];
+  toggleSave: (id: string) => void;
+  onEdit?: (recipe: Recipe) => void;
+  onDelete?: (id: string) => void;
+}) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {recipes.length === 0 ? (
@@ -28,6 +30,8 @@ const RecipeCards = ({
               key={recipe.id}
               recipe={recipe}
               toggleSave={toggleSave} 
+              onEdit={onEdit}
+              onDelete={onDelete}
             />
           </Link>
         ))

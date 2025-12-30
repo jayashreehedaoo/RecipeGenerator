@@ -1,0 +1,29 @@
+# Exclude npm config (contains CBA Artifactory credentials)
+.npmrc
+
+# Exclude local database files
+dev.db
+*.db
+*.db-*
+*.db-shm
+*.db-wal
+
+# Exclude test files
+test-db.ts
+
+# Exclude local environment files
+.env.local
+
+# Git files
+.git
+.gitignore
+
+# IDE files
+.vscode
+.idea
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

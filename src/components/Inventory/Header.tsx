@@ -9,6 +9,7 @@ export default function Header({
   searchQuery,
   setSearchQuery,
   getButtonClass,
+  activeFilter,
 }: {
   selectedItems: Set<string>;
   onClickAddItems: () => void;
@@ -19,32 +20,33 @@ export default function Header({
   handleBulkDelete: () => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
-  getButtonClass: (filter: string) => string;
+  getButtonClass: (filter: string, activeFilter: string) => string;
+  activeFilter: string;
 }) {
   return (
     <>
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-2">
           <button
-            className={getButtonClass("expiring")}
+            className={getButtonClass("expiring", activeFilter)}
             onClick={onClickExpirySoon}
           >
             ⏰ Expiring soon
           </button>
           <button
-            className={`${getButtonClass("all")}`}
+            className={`${getButtonClass("all", activeFilter)}`}
             onClick={onClickAllItems}
           >
             📋 All items
           </button>
           <button
-            className={`${getButtonClass("lowstock")}`}
+            className={`${getButtonClass("lowstock", activeFilter)}`}
             onClick={onClickLowStock}
           >
             ⚠️ Low stock
           </button>
           <button
-            className={`${getButtonClass("outofstock")}`}
+            className={`${getButtonClass("outofstock", activeFilter)}`}
             onClick={onClickOutOfStock}
           >
             ❌ Out of stock

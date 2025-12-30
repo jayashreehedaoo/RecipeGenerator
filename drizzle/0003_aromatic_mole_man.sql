@@ -1,0 +1,1 @@
+ALTER TABLE `ShoppingListItem` ADD `expiryDate` integer;

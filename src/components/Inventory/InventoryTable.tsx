@@ -1,4 +1,4 @@
-import { InventoryItem } from "@/types/inventory";
+import { InventoryItem } from "@/types/recipe-generator";
 
 export default function InventoryTable({
   displayedItems,
@@ -11,6 +11,7 @@ export default function InventoryTable({
   getSortIcon,
   getExpiryColor,
   getCategoryEmoji,
+  sortConfig,
 }: {
   displayedItems: InventoryItem[];
   selectedItems: Set<string>;
@@ -19,9 +20,10 @@ export default function InventoryTable({
   onToggleSelectItem: (id: string) => void;
   onToggleSelectAll: () => void;
   onSort: (field: keyof InventoryItem) => void;
-  getSortIcon: (field: keyof InventoryItem) => React.ReactNode;
+  getSortIcon: (field: keyof InventoryItem, sortConfig: { key: string; direction: "asc" | "desc" } | null) => React.ReactNode;
   getExpiryColor: (expiryDate: string) => string;
   getCategoryEmoji: (category: string) => string;
+  sortConfig: { key: string; direction: "asc" | "desc" } | null;
 }) {
   return (
     <div className="overflow-x-auto">
@@ -43,20 +45,20 @@ export default function InventoryTable({
               className="px-4 py-2 border cursor-pointer hover:bg-gray-300"
               onClick={() => onSort("name")}
             >
-              Item {getSortIcon("name")}
+              Item {getSortIcon("name", sortConfig)}
             </th>
             <th
               className="px-4 py-2 border cursor-pointer hover:bg-gray-300"
               onClick={() => onSort("quantity")}
             >
-              Quantity {getSortIcon("quantity")}
+              Quantity {getSortIcon("quantity", sortConfig)}
             </th>
             <th className="px-4 py-2 border">Unit</th>
             <th
               className="px-4 py-2 border cursor-pointer hover:bg-gray-300"
               onClick={() => onSort("expiryDate")}
             >
-              Expiration Date {getSortIcon("expiryDate")}
+              Expiration Date {getSortIcon("expiryDate", sortConfig)}
             </th>
             <th className="px-4 py-2 border">Actions</th>
           </tr>
@@ -97,10 +99,14 @@ export default function InventoryTable({
                 <td className="border px-4 py-2 text-center">{item.unit}</td>
                 <td
                   className={`border px-4 py-2 text-center ${getExpiryColor(
-                    item.expiryDate
+                    item.expiryDate.toISOString().split('T')[0]
                   )}`}
                 >
-                  {item.expiryDate}
+                  {new Date(item.expiryDate).toLocaleDateString('en-In', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
                 </td>
                 <td className="border px-4 py-2 text-center">
                   <button

@@ -1,6 +1,6 @@
 "use client";
 
-import { Recipe } from "@/types/recipe";
+import { Recipe } from "@/types/recipe-generator";
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 

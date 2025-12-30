@@ -51,7 +51,34 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-
+┌─────────────────────────────────────┐
+│         Frontend (React)            │
+│  - Next.js 14 App Router            │
+│  - TypeScript                       │
+│  - Tailwind CSS                     │
+│  - React Hooks                      │
+└─────────────────────────────────────┘
+                ↓
+┌─────────────────────────────────────┐
+│      Server Actions (Next.js)       │
+│  - Type-safe mutations              │
+│  - Automatic revalidation           │
+│  - Direct DB access                 │
+└─────────────────────────────────────┘
+                ↓
+┌─────────────────────────────────────┐
+│         ORM (Drizzle)               │
+│  - Type-safe queries                │
+│  - Schema definitions               │
+│  - Migrations                       │
+└─────────────────────────────────────┘
+                ↓
+┌─────────────────────────────────────┐
+│      Database (SQLite/Turso)        │
+│  - Lightweight                      │
+│  - Serverless-ready                 │
+│  - Production-grade                 │
+└─────────────────────────────────────┘
 
 
 ### Next JS:
