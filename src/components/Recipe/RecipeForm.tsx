@@ -1,20 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
-interface Recipe {
-  id: string;
-  name: string;
-  ingredients: string[];
-  instructions: string[];
-  prepTime: number;
-  cookTime: number;
-  servings: number;
-  calories: number;
-  category: string;
-  source: string;
-  isSaved: boolean;
-}
+import { Recipe } from "@/types/recipe-generator";
 
 interface RecipeFormProps {
   recipe: Recipe | null;
@@ -34,6 +21,7 @@ export default function RecipeForm({ recipe, onSave, onCancel, isAddMode }: Reci
     calories: 300,
     category: "Main Course",
     source: "Manual",
+    cuisine: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,6 +43,7 @@ export default function RecipeForm({ recipe, onSave, onCancel, isAddMode }: Reci
         calories: recipe.calories,
         category: recipe.category,
         source: recipe.source,
+        cuisine: recipe.cuisine || "",
       });
       setIngredientsText(recipe.ingredients.join('\n'));
       setInstructionsText(recipe.instructions.join('\n'));
@@ -135,6 +124,18 @@ export default function RecipeForm({ recipe, onSave, onCancel, isAddMode }: Reci
             <option value="Cookbook">📖 Cookbook</option>
           </select>
         </div>
+      </div>
+
+      {/* Cuisine */}
+      <div>
+        <label className="block text-sm font-medium mb-1">Cuisine</label>
+        <input
+          type="text"
+          value={formData.cuisine}
+          onChange={(e) => setFormData({ ...formData, cuisine: e.target.value })}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="e.g., Italian, Mexican, Indian"
+        />
       </div>
 
       {/* Time & Servings */}

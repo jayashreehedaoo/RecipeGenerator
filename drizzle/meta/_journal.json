@@ -29,6 +29,41 @@
       "when": 1767095144258,
       "tag": "0003_aromatic_mole_man",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1767326342852,
+      "tag": "0004_flimsy_paper_doll",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1767327420161,
+      "tag": "0005_tiresome_spitfire",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1767327931325,
+      "tag": "0006_violet_jack_flag",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1767330551860,
+      "tag": "0007_stormy_sugar_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1767330763893,
+      "tag": "0008_chubby_nitro",
+      "breakpoints": true
     }
   ]
 }

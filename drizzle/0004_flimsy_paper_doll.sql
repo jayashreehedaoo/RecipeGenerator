@@ -1,0 +1,1 @@
+ALTER TABLE `Recipe` ADD `cuisine` text DEFAULT 'Unknown' NOT NULL;

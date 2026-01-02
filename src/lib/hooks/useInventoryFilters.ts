@@ -16,7 +16,7 @@ export function useInventoryFilters(items: InventoryItem[]) {
     switch (activeFilter) {
       case "expiring":
         filtered = filtered.filter((item) => {
-          const daysUntilExpiry = getDaysUntilExpiry(item.expiryDate.toISOString());
+          const daysUntilExpiry = getDaysUntilExpiry(new Date(item.expiryDate).toISOString());
           return daysUntilExpiry >= 0 && daysUntilExpiry <= 7;
         });
         break;

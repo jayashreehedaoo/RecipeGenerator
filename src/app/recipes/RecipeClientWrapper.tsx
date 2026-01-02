@@ -4,41 +4,15 @@ import { useState, useTransition } from "react";
 import RecipeCards from "@/components/Recipe/RecipeCards";
 import RecipeForm from "@/components/Recipe/RecipeForm";
 import HeaderandFilters from "@/components/Recipe/HeaderandFilters";
-import { createRecipe, updateRecipe, deleteRecipe, toggleSaveRecipe } from "./actions";
-
-// Database recipe type (ingredients/instructions as strings)
-interface DbRecipe {
-  id: string;
-  name: string;
-  ingredients: string;
-  instructions: string;
-  prepTime: number;
-  cookTime: number;
-  servings: number;
-  calories: number;
-  category: string;
-  source: string;
-  isSaved: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-// Component recipe type (ingredients/instructions as arrays)
-interface Recipe {
-  id: string;
-  name: string;
-  ingredients: string[];
-  instructions: string[];
-  prepTime: number;
-  cookTime: number;
-  servings: number;
-  calories: number;
-  category: string;
-  source: string;
-  isSaved: boolean;
-  createdAt: string;
-  updatedAt?: string;
-}
+import {
+  createRecipe,
+  updateRecipe,
+  deleteRecipe,
+  toggleSaveRecipe,
+} from "./actions";
+import { Recipe as DbRecipe } from "@/db/schema";
+import { Recipe } from "@/types/recipe-generator";
+import { AIRecipeModal } from "@/components/Recipe/AIRecipeModal";
 
 interface RecipeClientWrapperProps {
   initialRecipes: DbRecipe[];
@@ -47,27 +21,51 @@ interface RecipeClientWrapperProps {
 // Helper to convert DB recipe to component recipe
 function dbToComponentRecipe(dbRecipe: DbRecipe): Recipe {
   return {
-    ...dbRecipe,
-    ingredients: dbRecipe.ingredients.split('\n').filter(i => i.trim()),
-    instructions: dbRecipe.instructions.split('\n').filter(i => i.trim()),
+    id: dbRecipe.id,
+    name: dbRecipe.name,
+    ingredients: dbRecipe.ingredients.split("\n").filter((i) => i.trim()),
+    instructions: dbRecipe.instructions.split("\n").filter((i) => i.trim()),
+    prepTime: dbRecipe.prepTime,
+    cookTime: dbRecipe.cookTime,
+    servings: dbRecipe.servings,
+    calories: dbRecipe.calories,
+    category: dbRecipe.category,
+    source: dbRecipe.source,
+    isSaved: dbRecipe.isSaved,
+    cuisine: dbRecipe.cuisine,
+    createdAt: dbRecipe.createdAt,
+    updatedAt: dbRecipe.updatedAt,
   };
 }
 
 // Helper to convert component recipe to DB format
-function componentToDbRecipe(recipe: Omit<Recipe, "id" | "isSaved" | "createdAt" | "updatedAt">): Omit<DbRecipe, "id" | "isSaved" | "createdAt" | "updatedAt"> {
+function componentToDbRecipe(
+  recipe: Omit<Recipe, "id" | "isSaved" | "createdAt" | "updatedAt">
+): Omit<DbRecipe, "id" | "isSaved" | "createdAt" | "updatedAt"> {
   return {
-    ...recipe,
-    ingredients: recipe.ingredients.join('\n'),
-    instructions: recipe.instructions.join('\n'),
+    name: recipe.name,
+    ingredients: recipe.ingredients.join("\n"),
+    instructions: recipe.instructions.join("\n"),
+    prepTime: recipe.prepTime,
+    cookTime: recipe.cookTime,
+    servings: recipe.servings,
+    calories: recipe.calories,
+    category: recipe.category,
+    source: recipe.source,
+    cuisine: recipe.cuisine,
   };
 }
 
-export default function RecipeClientWrapper({ initialRecipes }: RecipeClientWrapperProps) {
+export default function RecipeClientWrapper({
+  initialRecipes,
+}: RecipeClientWrapperProps) {
   const [recipes, setRecipes] = useState<Recipe[]>(
     initialRecipes.map(dbToComponentRecipe)
   );
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+  //   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
   const [isPending, startTransition] = useTransition();
-  
+
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -79,11 +77,14 @@ export default function RecipeClientWrapper({ initialRecipes }: RecipeClientWrap
   const [sortBy, setSortBy] = useState("newest");
 
   // Handle Add Recipe
-  const handleAddRecipe = async (recipeData: Omit<Recipe, "id" | "isSaved" | "createdAt" | "updatedAt">) => {
+  const handleAddRecipe = async (
+    recipeData: Omit<Recipe, "id" | "isSaved" | "createdAt" | "updatedAt">
+  ) => {
     startTransition(async () => {
       try {
         const dbRecipe = await createRecipe(componentToDbRecipe(recipeData));
-        setRecipes((prev) => [dbToComponentRecipe(dbRecipe), ...prev]);
+        const componentRecipe = dbToComponentRecipe(dbRecipe);
+        setRecipes((prev) => [componentRecipe, ...prev]);
         setShowAddModal(false);
       } catch (error) {
         console.error("Failed to add recipe:", error);
@@ -98,14 +99,21 @@ export default function RecipeClientWrapper({ initialRecipes }: RecipeClientWrap
     setShowEditModal(true);
   };
 
-  const handleUpdateRecipe = async (recipeData: Omit<Recipe, "id" | "isSaved" | "createdAt" | "updatedAt">) => {
+  const handleUpdateRecipe = async (
+    recipeData: Omit<Recipe, "id" | "isSaved" | "createdAt" | "updatedAt">
+  ) => {
     if (!selectedRecipe) return;
 
     startTransition(async () => {
       try {
-        const dbRecipe = await updateRecipe(selectedRecipe.id, componentToDbRecipe(recipeData));
+        const dbRecipe = await updateRecipe(
+          selectedRecipe.id,
+          componentToDbRecipe(recipeData)
+        );
         setRecipes((prev) =>
-          prev.map((r) => (r.id === dbRecipe.id ? dbToComponentRecipe(dbRecipe) : r))
+          prev.map((r) =>
+            r.id === dbRecipe.id ? dbToComponentRecipe(dbRecipe) : r
+          )
         );
         setShowEditModal(false);
         setSelectedRecipe(null);
@@ -137,7 +145,9 @@ export default function RecipeClientWrapper({ initialRecipes }: RecipeClientWrap
       try {
         const dbRecipe = await toggleSaveRecipe(id);
         setRecipes((prev) =>
-          prev.map((r) => (r.id === dbRecipe.id ? dbToComponentRecipe(dbRecipe) : r))
+          prev.map((r) =>
+            r.id === dbRecipe.id ? dbToComponentRecipe(dbRecipe) : r
+          )
         );
       } catch (error) {
         console.error("Failed to toggle save:", error);
@@ -146,37 +156,45 @@ export default function RecipeClientWrapper({ initialRecipes }: RecipeClientWrap
     });
   };
 
-  // Filter and Sort Recipes
-  const filteredRecipes = recipes
-    .filter((recipe) => {
-      const matchesSearch = recipe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          recipe.ingredients.some(i => i.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-      // Handle filter logic
-      if (activeFilter === "all") return matchesSearch;
-      if (activeFilter === "saved") return matchesSearch && recipe.isSaved;
-      if (activeFilter === "ai") return matchesSearch && recipe.source === "AI Generated";
-      return matchesSearch && recipe.category === activeFilter;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "newest":
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        case "oldest":
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-        case "name":
-          return a.name.localeCompare(b.name);
-        case "quickest":
-          return (a.prepTime + a.cookTime) - (b.prepTime + b.cookTime);
-        case "calories":
-          return a.calories - b.calories;
-        default:
-          return 0;
-      }
-    });
+  // Filter recipes based on search and category
+  const filteredRecipes = recipes.filter((recipe) => {
+    const matchesSearch =
+      recipe.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      recipe.ingredients
+        .join(" ")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+
+    const selectedCategory = activeFilter;
+    const matchesCategory =
+      selectedCategory === "all" ||
+      (selectedCategory === "saved" && recipe.isSaved) ||
+      (selectedCategory === "ai" && recipe.source === "AI Generated") ||
+      recipe.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
+
+  // Sort recipes
+  const sortedRecipes = [...filteredRecipes].sort((a, b) => {
+    switch (sortBy) {
+      case "newest":
+        return b.createdAt - a.createdAt;
+      case "oldest":
+        return a.createdAt - b.createdAt;
+      case "name":
+        return a.name.localeCompare(b.name);
+      case "quickest":
+        return (a.prepTime || 0) - (b.prepTime || 0);
+      case "calories":
+        return (a.calories || 0) - (b.calories || 0);
+      default:
+        return 0;
+    }
+  });
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header with Filters */}
         <HeaderandFilters
@@ -187,13 +205,15 @@ export default function RecipeClientWrapper({ initialRecipes }: RecipeClientWrap
         />
 
         {/* Sort Controls & Add Button */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-4 mb-6">
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700">Sort by:</label>
+            <label className="text-xs sm:text-sm font-medium text-gray-700">
+              Sort by:
+            </label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 sm:flex-none px-2 sm:px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -202,13 +222,25 @@ export default function RecipeClientWrapper({ initialRecipes }: RecipeClientWrap
               <option value="calories">Lowest Calories</option>
             </select>
           </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
-          >
-            <span className="text-xl">+</span>
-            Add Recipe
-          </button>
+          <div className="flex gap-2 sm:gap-4">
+            <button
+              onClick={() => setIsAIModalOpen(true)}
+              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-linear-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all flex items-center justify-center gap-2 font-medium shadow-md hover:shadow-lg text-sm sm:text-base"
+            >
+              <span className="text-lg sm:text-xl">✨</span>
+              <span className="hidden sm:inline">AI Recipe</span>
+              <span className="sm:hidden">AI</span>
+            </button>
+
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+            >
+              <span className="text-lg sm:text-xl">+</span>
+              <span className="hidden sm:inline">Add Recipe</span>
+              <span className="sm:hidden">Add</span>
+            </button>
+          </div>
         </div>
 
         {/* Loading State */}
@@ -221,7 +253,7 @@ export default function RecipeClientWrapper({ initialRecipes }: RecipeClientWrap
 
         {/* Recipe Cards */}
         <RecipeCards
-          recipes={filteredRecipes}
+          recipes={sortedRecipes}
           toggleSave={handleToggleSave}
           onEdit={handleEditClick}
           onDelete={handleDeleteRecipe}
@@ -245,7 +277,9 @@ export default function RecipeClientWrapper({ initialRecipes }: RecipeClientWrap
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white border-b p-6 z-10">
-                <h2 className="text-2xl font-bold text-gray-800">Add New Recipe</h2>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Add New Recipe
+                </h2>
               </div>
               <div className="p-6">
                 <RecipeForm
@@ -259,12 +293,23 @@ export default function RecipeClientWrapper({ initialRecipes }: RecipeClientWrap
           </div>
         )}
 
+        <AIRecipeModal
+          isOpen={isAIModalOpen}
+          onClose={() => setIsAIModalOpen(false)}
+          onSuccess={() => {
+            // Refresh page to show new recipe
+            window.location.reload();
+          }}
+        />
+
         {/* Edit Recipe Modal */}
         {showEditModal && selectedRecipe && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white border-b p-6 z-10">
-                <h2 className="text-2xl font-bold text-gray-800">Edit Recipe</h2>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Edit Recipe
+                </h2>
               </div>
               <div className="p-6">
                 <RecipeForm

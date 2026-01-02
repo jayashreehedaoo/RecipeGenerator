@@ -25,44 +25,52 @@ export default function Header({
 }) {
   return (
     <>
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex gap-2">
+      {/* Action Buttons - Mobile First */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+        {/* Filter Buttons */}
+        <div className="flex flex-wrap gap-2">
           <button
-            className={getButtonClass("expiring", activeFilter)}
+            className={`${getButtonClass("expiring", activeFilter)} text-sm sm:text-base`}
             onClick={onClickExpirySoon}
           >
-            ⏰ Expiring soon
+            <span className="hidden sm:inline">⏰ Expiring soon</span>
+            <span className="sm:hidden">⏰ Expiring</span>
           </button>
           <button
-            className={`${getButtonClass("all", activeFilter)}`}
+            className={`${getButtonClass("all", activeFilter)} text-sm sm:text-base`}
             onClick={onClickAllItems}
           >
-            📋 All items
+            <span className="hidden sm:inline">📋 All items</span>
+            <span className="sm:hidden">📋 All</span>
           </button>
           <button
-            className={`${getButtonClass("lowstock", activeFilter)}`}
+            className={`${getButtonClass("lowstock", activeFilter)} text-sm sm:text-base`}
             onClick={onClickLowStock}
           >
-            ⚠️ Low stock
+            <span className="hidden sm:inline">⚠️ Low stock</span>
+            <span className="sm:hidden">⚠️ Low</span>
           </button>
           <button
-            className={`${getButtonClass("outofstock", activeFilter)}`}
+            className={`${getButtonClass("outofstock", activeFilter)} text-sm sm:text-base`}
             onClick={onClickOutOfStock}
           >
-            ❌ Out of stock
+            <span className="hidden sm:inline">❌ Out of stock</span>
+            <span className="sm:hidden">❌ Out of stock</span>
           </button>
         </div>
-        <div className="flex gap-2">
+        
+        {/* Action Buttons */}
+        <div className="flex gap-2 flex-wrap sm:flex-nowrap">
           {selectedItems.size > 0 && (
             <button
-              className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600"
+              className="px-3 sm:px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 text-sm sm:text-base flex-1 sm:flex-none"
               onClick={handleBulkDelete}
             >
               🗑️ Delete ({selectedItems.size})
             </button>
           )}
           <button
-            className="hover:text-blue-500 border-green-300 border-2 bg-green-200 rounded-xl px-4 py-2"
+            className="hover:text-blue-500 border-green-300 border-2 bg-green-200 rounded-xl px-3 sm:px-4 py-2 text-sm sm:text-base flex-1 sm:flex-none whitespace-nowrap"
             onClick={onClickAddItems}
           >
             ➕ Add items
@@ -77,7 +85,7 @@ export default function Header({
           placeholder="🔍 Search items..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
         />
       </div>
     </>

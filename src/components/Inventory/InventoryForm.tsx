@@ -20,7 +20,7 @@ const InventoryForm = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Populate form when editing
+    // Populate form when editing or reset when adding
   useEffect(() => {
     if (item) {
       setFormData({
@@ -29,6 +29,15 @@ const InventoryForm = ({
         unit: item.unit,
         category: item.category,
         expiryDate: new Date(item.expiryDate).toISOString().split("T")[0],
+      });
+    } else {
+      // Reset to defaults when adding new item
+      setFormData({
+        name: "",
+        quantity: 1,
+        unit: "pcs",
+        category: "Vegetables",
+        expiryDate: new Date().toISOString().split("T")[0],
       });
     }
   }, [item]);
@@ -40,7 +49,7 @@ const InventoryForm = ({
     try {
       await onSave({
         ...formData,
-        expiryDate: new Date(formData.expiryDate),
+        expiryDate: new Date(formData.expiryDate).getTime(),
         ...(item?.id ? { id: item.id } : {}),
         ...(item?.addedDate ? { addedDate: item.addedDate } : {}),
       } as InventoryItem);
@@ -51,6 +60,26 @@ const InventoryForm = ({
     }
   };
 
+  // Common food item suggestions
+  const commonItems = [
+    // Vegetables
+    "Tomatoes", "Onions", "Potatoes", "Carrots", "Broccoli", "Spinach", "Bell Peppers", "Cucumber", "Lettuce", "Garlic",
+    "Ginger", "Cauliflower", "Cabbage", "Mushrooms", "Eggplant", "Zucchini", "Pumpkin", "Sweet Potato",
+    // Fruits
+    "Apples", "Bananas", "Oranges", "Grapes", "Strawberries", "Blueberries", "Mango", "Pineapple", "Watermelon",
+    "Avocado", "Lemon", "Lime", "Peaches", "Pears", "Kiwi", "Papaya", "Pomegranate",
+    // Dairy
+    "Milk", "Cheese", "Butter", "Yogurt", "Cream", "Paneer", "Eggs", "Sour Cream",
+    // Meat & Protein
+    "Chicken Breast", "Chicken Thighs", "Ground Beef", "Pork Chops", "Salmon", "Tuna", "Shrimp", "Tofu", "Bacon",
+    // Grains & Pasta
+    "Rice", "Pasta", "Bread", "Flour", "Quinoa", "Oats", "Noodles", "Tortillas", "Couscous",
+    // Pantry Items
+    "Olive Oil", "Vegetable Oil", "Salt", "Pepper", "Sugar", "Honey", "Soy Sauce", "Vinegar", "Ketchup", "Mustard",
+    // Beverages
+    "Orange Juice", "Apple Juice", "Coffee", "Tea", "Soda", "Water",
+  ];
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Name */}
@@ -58,12 +87,18 @@ const InventoryForm = ({
         <label className="block text-sm font-medium mb-1">Item Name *</label>
         <input
           type="text"
+          list="item-suggestions"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           placeholder="e.g., Tomatoes"
           required
         />
+        <datalist id="item-suggestions">
+          {commonItems.map((item) => (
+            <option key={item} value={item} />
+          ))}
+        </datalist>
       </div>
 
       {/* Quantity & Unit */}
@@ -132,6 +167,8 @@ const InventoryForm = ({
           onChange={(e) =>
             setFormData({ ...formData, expiryDate: e.target.value })
           }
+          min={new Date().toISOString().split("T")[0]}
+          max={new Date(Date.now() + 2 * 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]} // max year for 2 years
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           required
         />

@@ -13,12 +13,6 @@ export default async function RecipePage() {
     .from(schema.recipes)
     .orderBy(schema.recipes.createdAt);
 
-  // Convert Date objects to strings for client components
-  const recipesWithStringDates = recipes.map((recipe) => ({
-    ...recipe,
-    createdAt: recipe.createdAt.toISOString(),
-    updatedAt: recipe.updatedAt.toISOString(),
-  }));
-
-  return <RecipeClientWrapper initialRecipes={recipesWithStringDates} />;
+  // Pass DbRecipe data directly - no conversion needed
+  return <RecipeClientWrapper initialRecipes={recipes} />;
 }

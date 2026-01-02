@@ -83,7 +83,7 @@ export function InventoryClientWrapper({ initialItems }: { initialItems: Invento
     formData.append('quantity', itemData.quantity.toString());
     formData.append('unit', itemData.unit);
     formData.append('category', itemData.category);
-    formData.append('expiryDate', itemData.expiryDate.toISOString());
+    formData.append('expiryDate', new Date(itemData.expiryDate).toISOString());
 
     startTransition(async () => {
       try {

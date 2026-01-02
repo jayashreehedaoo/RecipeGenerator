@@ -10,7 +10,7 @@ const Header = ({
   setSearchQuery: (query: string) => void;
 }) => {
   const getButtonClass = (filterName: string) => {
-    const baseClass = "border-2 rounded-xl px-4 py-2 transition-colors";
+    const baseClass = "border-2 rounded-xl px-3 sm:px-4 py-2 transition-colors text-sm sm:text-base";
     const activeClass = "bg-blue-500 text-white border-blue-600";
     const inactiveClass = "bg-gray-200 border-gray-300 hover:text-blue-500";
 
@@ -21,9 +21,9 @@ const Header = ({
 
   return (
     <>
-      <div className="mb-6">
-        <h1 className="text-4xl font-bold text-gray-800">Recipes 🍳</h1>
-        <p className="text-gray-600 mt-2">
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800">Recipes 🍳</h1>
+        <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
           Browse and manage your recipe collection
         </p>
       </div>
@@ -33,7 +33,7 @@ const Header = ({
           className={getButtonClass("all")}
           onClick={() => setActiveFilter("all")}
         >
-          📋 All Recipes
+          📋 <span className="hidden xs:inline">All </span>Recipes
         </button>
         <button
           className={getButtonClass("saved")}
@@ -45,7 +45,7 @@ const Header = ({
           className={getButtonClass("ai")}
           onClick={() => setActiveFilter("ai")}
         >
-          🤖 AI Generated
+          🤖 <span className="hidden sm:inline">AI </span>Gen<span className="hidden xs:inline">erated</span>
         </button>
         <button
           className={getButtonClass("Breakfast")}
@@ -73,7 +73,7 @@ const Header = ({
           placeholder="🔍 Search recipes or ingredients..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
     </>

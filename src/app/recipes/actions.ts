@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { getDb, schema } from '@/db';
+import { type Recipe as DbRecipe } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
 export async function createRecipe(recipeData: {
@@ -14,15 +15,15 @@ export async function createRecipe(recipeData: {
   calories: number;
   category: string;
   source: string;
+  cuisine: string;
   isSaved?: boolean;
-}) {
+}): Promise<DbRecipe> {
   try {
     const db = await getDb();
     const id = crypto.randomUUID();
-    const now = new Date();
+    const now = Date.now();
 
     await db.insert(schema.recipes).values({
-      id,
       name: recipeData.name,
       ingredients: recipeData.ingredients,
       instructions: recipeData.instructions,
@@ -32,6 +33,7 @@ export async function createRecipe(recipeData: {
       calories: recipeData.calories,
       category: recipeData.category,
       source: recipeData.source,
+      cuisine: recipeData.cuisine,
       isSaved: recipeData.isSaved ?? false,
       createdAt: now,
       updatedAt: now,
@@ -45,12 +47,7 @@ export async function createRecipe(recipeData: {
 
     revalidatePath('/recipes');
     
-    // Convert dates to strings for client
-    return {
-      ...newRecipe,
-      createdAt: newRecipe.createdAt.toISOString(),
-      updatedAt: newRecipe.updatedAt.toISOString(),
-    };
+    return newRecipe;
   } catch (error) {
     console.error('Failed to create recipe:', error);
     throw new Error('Failed to create recipe');
@@ -69,9 +66,10 @@ export async function updateRecipe(
     calories: number;
     category: string;
     source: string;
+    cuisine: string;
     isSaved: boolean;
   }>
-) {
+): Promise<DbRecipe> {
   try {
     const db = await getDb();
 
@@ -79,7 +77,7 @@ export async function updateRecipe(
       .update(schema.recipes)
       .set({
         ...recipeData,
-        updatedAt: new Date(),
+        updatedAt: Date.now(),
       })
       .where(eq(schema.recipes.id, id));
 
@@ -92,12 +90,7 @@ export async function updateRecipe(
     revalidatePath('/recipes');
     revalidatePath(`/recipes/${id}`);
     
-    // Convert dates to strings for client
-    return {
-      ...updated,
-      createdAt: updated.createdAt.toISOString(),
-      updatedAt: updated.updatedAt.toISOString(),
-    };
+    return updated;
   } catch (error) {
     console.error('Failed to update recipe:', error);
     throw new Error('Failed to update recipe');
@@ -118,7 +111,7 @@ export async function deleteRecipe(id: string) {
   }
 }
 
-export async function toggleSaveRecipe(id: string) {
+export async function toggleSaveRecipe(id: string): Promise<DbRecipe> {
   try {
     const db = await getDb();
 
@@ -137,7 +130,7 @@ export async function toggleSaveRecipe(id: string) {
       .update(schema.recipes)
       .set({
         isSaved: !recipe.isSaved,
-        updatedAt: new Date(),
+        updatedAt: Date.now(),
       })
       .where(eq(schema.recipes.id, id));
 
@@ -150,12 +143,7 @@ export async function toggleSaveRecipe(id: string) {
     revalidatePath('/recipes');
     revalidatePath(`/recipes/${id}`);
     
-    // Convert dates to strings for client
-    return {
-      ...updated,
-      createdAt: updated.createdAt.toISOString(),
-      updatedAt: updated.updatedAt.toISOString(),
-    };
+    return updated;
   } catch (error) {
     console.error('Failed to toggle save recipe:', error);
     throw new Error('Failed to toggle save recipe');

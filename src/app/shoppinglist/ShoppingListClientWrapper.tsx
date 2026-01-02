@@ -14,7 +14,7 @@ export default function ShoppingListClientWrapper({
 
   return (
     <>
-      <div className="bg-white border-2 border-gray-300 rounded-lg p-6 mb-6">
+      <div className="bg-white border-2 border-gray-300 rounded-lg p-4 sm:p-6 mb-6">
         <ProgressBar
           progress={progress}
           purchasedCount={purchasedCount}

@@ -5,8 +5,8 @@ export interface InventoryItem {
   quantity: number;
   unit: string;
   category: string;
-  expiryDate: Date;
-  addedDate: Date;
+  expiryDate: number;
+  addedDate: number;
 }
 export interface InventoryFormProps {
   item: InventoryItem | null;
@@ -29,11 +29,15 @@ export interface Recipe {
   category: string;
   source: string;
   isSaved: boolean;
-  createdAt: string;
+  createdAt: number;
+  updatedAt: number;
+  cuisine: string;
 }
 export interface RecipeCardsProps {
   recipes: Recipe[];
   toggleSave: (id: string) => void;
+  onEdit: (recipe: Recipe) => void;
+  onDelete: (id: string) => void;
 }
 
 //ShoppingCart
@@ -47,3 +51,6 @@ export interface ShoppingListItem {
   expiryDate?: number;
 }
 
+export type RecipeFormData = Omit<Recipe, 'id' | 'isSaved' | 'createdAt' | 'updatedAt'>;
+export type InventoryFormData = Omit<InventoryItem, 'id' | 'addedDate'>;
+export type ShoppingListFormData = Omit<ShoppingListItem, 'id' | 'purchased'>;

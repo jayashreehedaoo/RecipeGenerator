@@ -1,0 +1,2 @@
+ALTER TABLE `Recipe` ALTER COLUMN "createdAt" TO "createdAt" integer NOT NULL DEFAULT (unixepoch());--> statement-breakpoint
+ALTER TABLE `Recipe` ALTER COLUMN "updatedAt" TO "updatedAt" integer NOT NULL DEFAULT (unixepoch());

@@ -9,12 +9,11 @@ export async function createInventoryItem(formData: FormData) {
     const db = await getDb();
     
     await db.insert(schema.InventoryItem).values({
-      id: crypto.randomUUID(),
       name: formData.get('name') as string,
       quantity: Number(formData.get('quantity')),
       unit: formData.get('unit') as string,
       category: formData.get('category') as string,
-      expiryDate: new Date(formData.get('expiryDate') as string),
+      expiryDate: new Date(formData.get('expiryDate') as string).getTime(),
     });
 
     revalidatePath('/inventory');
@@ -36,7 +35,7 @@ export async function updateInventoryItem(id: string, formData: FormData) {
         quantity: Number(formData.get('quantity')),
         unit: formData.get('unit') as string,
         category: formData.get('category') as string,
-        expiryDate: new Date(formData.get('expiryDate') as string),
+        expiryDate: new Date(formData.get('expiryDate') as string).getTime(),
       })
       .where(eq(schema.InventoryItem.id, id));
 
