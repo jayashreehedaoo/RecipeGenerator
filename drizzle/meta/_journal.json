@@ -64,6 +64,20 @@
       "when": 1767330763893,
       "tag": "0008_chubby_nitro",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1767349511586,
+      "tag": "0009_slippery_phil_sheldon",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1767349752654,
+      "tag": "0010_freezing_the_spike",
+      "breakpoints": true
     }
   ]
 }

@@ -12,10 +12,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-        <title>Pantry Chef - Your Smart Kitchen Companion</title>
-      </head>
       <body className="h-full flex flex-col">
         <Header />
         <NavBar />
