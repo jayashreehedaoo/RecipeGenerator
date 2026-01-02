@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useTransition } from "react";
 import { InventoryItem } from "@/types/recipe-generator";
@@ -19,7 +19,11 @@ import {
   bulkDeleteInventoryItems,
 } from "./actions";
 
-export function InventoryClientWrapper({ initialItems }: { initialItems: InventoryItem[] }) {
+export function InventoryClientWrapper({
+  initialItems,
+}: {
+  initialItems: InventoryItem[];
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [isAddMode, setIsAddMode] = useState(false);
@@ -77,13 +81,15 @@ export function InventoryClientWrapper({ initialItems }: { initialItems: Invento
   };
 
   // ✅ CRUD handlers using Server Actions
-  const handleSave = async (itemData: Omit<InventoryItem, "id" | "addedDate">) => {
+  const handleSave = async (
+    itemData: Omit<InventoryItem, "id" | "addedDate">
+  ) => {
     const formData = new FormData();
-    formData.append('name', itemData.name);
-    formData.append('quantity', itemData.quantity.toString());
-    formData.append('unit', itemData.unit);
-    formData.append('category', itemData.category);
-    formData.append('expiryDate', new Date(itemData.expiryDate).toISOString());
+    formData.append("name", itemData.name);
+    formData.append("quantity", itemData.quantity.toString());
+    formData.append("unit", itemData.unit);
+    formData.append("category", itemData.category);
+    formData.append("expiryDate", new Date(itemData.expiryDate).toISOString());
 
     startTransition(async () => {
       try {
@@ -98,11 +104,11 @@ export function InventoryClientWrapper({ initialItems }: { initialItems: Invento
           closeModal();
           setSelectedItems(new Set());
         } else {
-          alert(result?.error || 'Failed to save item');
+          alert(result?.error || "Failed to save item");
         }
       } catch (error) {
-        console.error('Failed to save item:', error);
-        alert('Failed to save item. Please try again.');
+        console.error("Failed to save item:", error);
+        alert("Failed to save item. Please try again.");
       }
     });
   };
@@ -119,8 +125,8 @@ export function InventoryClientWrapper({ initialItems }: { initialItems: Invento
           alert(result.error);
         }
       } catch (error) {
-        console.error('Failed to delete item:', error);
-        alert('Failed to delete item. Please try again.');
+        console.error("Failed to delete item:", error);
+        alert("Failed to delete item. Please try again.");
       }
     });
   };
@@ -135,15 +141,17 @@ export function InventoryClientWrapper({ initialItems }: { initialItems: Invento
 
     startTransition(async () => {
       try {
-        const result = await bulkDeleteInventoryItems(Array.from(selectedItems));
+        const result = await bulkDeleteInventoryItems(
+          Array.from(selectedItems)
+        );
         if (result.success) {
           setSelectedItems(new Set());
         } else {
           alert(result.error);
         }
       } catch (error) {
-        console.error('Failed to delete items:', error);
-        alert('Failed to delete some items. Please try again.');
+        console.error("Failed to delete items:", error);
+        alert("Failed to delete some items. Please try again.");
       }
     });
   };
@@ -167,13 +175,47 @@ export function InventoryClientWrapper({ initialItems }: { initialItems: Invento
     }
   };
 
+  const inventoryModal = isModalOpen && (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          closeModal();
+        }
+      }}
+    >
+      <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto animate-slide-in">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">
+            {isAddMode ? "Add New Item" : "Edit Item"}
+          </h2>
+          <button
+            onClick={closeModal}
+            className="text-gray-500 hover:text-gray-700 text-2xl"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+        <InventoryForm
+          item={selectedItem}
+          onSave={handleSave}
+          onCancel={closeModal}
+          isAddMode={isAddMode}
+        />
+      </div>
+    </div>
+  );
+
   // ✅ Empty state
   if (initialItems.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-4">📦</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">No Items Yet</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            No Items Yet
+          </h2>
           <p className="text-gray-600 mb-6">
             Start building your inventory by adding your first item.
           </p>
@@ -184,100 +226,73 @@ export function InventoryClientWrapper({ initialItems }: { initialItems: Invento
             Add Your First Item
           </button>
         </div>
+        {inventoryModal}
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* ✅ Show loading overlay during transitions */}
-      {isPending && (
-        <div className="fixed inset-0 bg-black bg-opacity-20 z-40 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+    (
+      <div className="min-h-screen bg-gray-50">
+        {/* ✅ Show loading overlay during transitions */}
+        {isPending && (
+          <div className="fixed inset-0 bg-black bg-opacity-20 z-40 flex items-center justify-center">
+            <div className="bg-white rounded-lg p-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            </div>
           </div>
-        </div>
-      )}
-
-      <div className="container mx-auto px-4 py-6">
-        <Header
-          selectedItems={selectedItems}
-          onClickAddItems={onClickAddItems}
-          onClickExpirySoon={onClickExpirySoon}
-          onClickAllItems={onClickAllItems}
-          onClickLowStock={onClickLowStock}
-          onClickOutOfStock={onClickOutOfStock}
-          handleBulkDelete={handleBulkDelete}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          getButtonClass={getButtonClass}
-          activeFilter={activeFilter}
-        />
-
-        {filteredItems.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-4xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              No Items Found
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Try adjusting your filters or search query.
-            </p>
-            <button
-              onClick={onClickAllItems}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              Clear Filters
-            </button>
-          </div>
-        ) : (
-          <InventoryTable
-            displayedItems={filteredItems}
-            selectedItems={selectedItems}
-            onClickUpdateItems={onClickUpdateItems}
-            onClickDeleteItems={handleDelete}
-            onToggleSelectItem={toggleSelectItem}
-            onToggleSelectAll={toggleSelectAll}
-            onSort={handleSort}
-            getSortIcon={getSortIcon}
-            getExpiryColor={getExpiryColor}
-            getCategoryEmoji={getCategoryEmoji}
-            sortConfig={sortConfig}
-          />
         )}
-      </div>
 
-      {isModalOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              closeModal();
-            }
-          }}
-        >
-          <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto animate-slide-in">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">
-                {isAddMode ? "Add New Item" : "Edit Item"}
-              </h2>
+        <div className="container mx-auto px-4 py-6">
+          <Header
+            selectedItems={selectedItems}
+            onClickAddItems={onClickAddItems}
+            onClickExpirySoon={onClickExpirySoon}
+            onClickAllItems={onClickAllItems}
+            onClickLowStock={onClickLowStock}
+            onClickOutOfStock={onClickOutOfStock}
+            handleBulkDelete={handleBulkDelete}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            getButtonClass={getButtonClass}
+            activeFilter={activeFilter}
+          />
+
+          {filteredItems.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-4xl mb-4">🔍</div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                No Items Found
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Try adjusting your filters or search query.
+              </p>
               <button
-                onClick={closeModal}
-                className="text-gray-500 hover:text-gray-700 text-2xl"
-                aria-label="Close"
+                onClick={onClickAllItems}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
               >
-                ×
+                Clear Filters
               </button>
             </div>
-            <InventoryForm
-              item={selectedItem}
-              onSave={handleSave}
-              onCancel={closeModal}
-              isAddMode={isAddMode}
+          ) : (
+            <InventoryTable
+              displayedItems={filteredItems}
+              selectedItems={selectedItems}
+              onClickUpdateItems={onClickUpdateItems}
+              onClickDeleteItems={handleDelete}
+              onToggleSelectItem={toggleSelectItem}
+              onToggleSelectAll={toggleSelectAll}
+              onSort={handleSort}
+              getSortIcon={getSortIcon}
+              getExpiryColor={getExpiryColor}
+              getCategoryEmoji={getCategoryEmoji}
+              sortConfig={sortConfig}
             />
-          </div>
+          )}
         </div>
-      )}
-    </div>
+
+        {inventoryModal}
+      </div>
+    )
   );
 }

@@ -41,7 +41,6 @@ export default function RecipeModalPage({
   }, [recipeId, router]);
 
   const toggleSave = async (id: string) => {
-    console.log("Toggle save in modal:", id);
     // Optimistically update UI
     if (recipe) {
       setRecipe({ ...recipe, isSaved: !recipe.isSaved });

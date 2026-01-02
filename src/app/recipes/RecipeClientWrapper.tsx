@@ -63,7 +63,6 @@ export default function RecipeClientWrapper({
     initialRecipes.map(dbToComponentRecipe)
   );
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
-  //   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
   const [isPending, startTransition] = useTransition();
 
   // Modal states
@@ -193,6 +192,67 @@ export default function RecipeClientWrapper({
     }
   });
 
+  const addRecipeModal = showAddModal && (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b p-6 z-10">
+          <h2 className="text-2xl font-bold text-gray-800">Add New Recipe</h2>
+        </div>
+        <div className="p-6">
+          <RecipeForm
+            recipe={null}
+            onSave={handleAddRecipe}
+            onCancel={() => setShowAddModal(false)}
+            isAddMode={true}
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+  const editRecipeModal = showEditModal && selectedRecipe && (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b p-6 z-10">
+          <h2 className="text-2xl font-bold text-gray-800">Edit Recipe</h2>
+        </div>
+        <div className="p-6">
+          <RecipeForm
+            recipe={selectedRecipe}
+            onSave={handleUpdateRecipe}
+            onCancel={() => {
+              setShowEditModal(false);
+              setSelectedRecipe(null);
+            }}
+            isAddMode={false}
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+  // ✅ Empty state
+  if (recipes.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center max-w-md">
+          <div className="text-6xl mb-4">📦</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            No Recipes Yet
+          </h2>
+          <p className="text-gray-600 mb-6">Start adding recipes by clicking the button below.</p>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Add Your First Recipe
+          </button>
+        </div>
+        {addRecipeModal}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
@@ -272,26 +332,7 @@ export default function RecipeClientWrapper({
           </div>
         )}
 
-        {/* Add Recipe Modal */}
-        {showAddModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="sticky top-0 bg-white border-b p-6 z-10">
-                <h2 className="text-2xl font-bold text-gray-800">
-                  Add New Recipe
-                </h2>
-              </div>
-              <div className="p-6">
-                <RecipeForm
-                  recipe={null}
-                  onSave={handleAddRecipe}
-                  onCancel={() => setShowAddModal(false)}
-                  isAddMode={true}
-                />
-              </div>
-            </div>
-          </div>
-        )}
+        {addRecipeModal}
 
         <AIRecipeModal
           isOpen={isAIModalOpen}
@@ -302,29 +343,7 @@ export default function RecipeClientWrapper({
           }}
         />
 
-        {/* Edit Recipe Modal */}
-        {showEditModal && selectedRecipe && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="sticky top-0 bg-white border-b p-6 z-10">
-                <h2 className="text-2xl font-bold text-gray-800">
-                  Edit Recipe
-                </h2>
-              </div>
-              <div className="p-6">
-                <RecipeForm
-                  recipe={selectedRecipe}
-                  onSave={handleUpdateRecipe}
-                  onCancel={() => {
-                    setShowEditModal(false);
-                    setSelectedRecipe(null);
-                  }}
-                  isAddMode={false}
-                />
-              </div>
-            </div>
-          </div>
-        )}
+        {editRecipeModal}
       </div>
     </div>
   );
