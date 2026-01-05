@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { toggleSaveRecipe } from '../actions';
-import { addRecipeToShoppingList } from '@/app/shoppinglist/actions';
-import { Recipe } from '@/types/recipe-generator';
+import { useState, useTransition } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toggleSaveRecipe } from "../actions";
+import { addRecipeToShoppingList } from "@/app/shoppinglist/actions";
+import { Recipe } from "@/types/recipe-generator";
 
 interface Props {
   recipe: Recipe;
@@ -18,8 +18,8 @@ export function RecipeDetailsClient({ recipe: initialRecipe }: Props) {
   const [notification, setNotification] = useState<{
     show: boolean;
     message: string;
-    type: 'success' | 'error';
-  }>({ show: false, message: '', type: 'success' });
+    type: "success" | "error";
+  }>({ show: false, message: "", type: "success" });
   const router = useRouter();
 
   const handleToggleSave = () => {
@@ -37,30 +37,40 @@ export function RecipeDetailsClient({ recipe: initialRecipe }: Props) {
         recipe.name,
         recipe.ingredients
       );
-      
+
       if (result.success) {
         setNotification({
           show: true,
-          message: result.message || 'Ingredients added to shopping list!',
-          type: 'success'
+          message: result.message || "Ingredients added to shopping list!",
+          type: "success",
         });
-        setTimeout(() => setNotification({ show: false, message: '', type: 'success' }), 5000);
+        setTimeout(
+          () => setNotification({ show: false, message: "", type: "success" }),
+          5000
+        );
       } else {
         setNotification({
           show: true,
-          message: result.error || 'Failed to add ingredients',
-          type: 'error'
+          message: result.error || "Failed to add ingredients",
+          type: "error",
         });
-        setTimeout(() => setNotification({ show: false, message: '', type: 'error' }), 5000);
+        setTimeout(
+          () => setNotification({ show: false, message: "", type: "error" }),
+          5000
+        );
       }
     } catch (error) {
-      console.error('Failed to add to shopping list:', error);
+      console.error("Failed to add to shopping list:", error);
       setNotification({
         show: true,
-        message: 'Failed to add ingredients to shopping list. Please try again.',
-        type: 'error'
+        message:
+          "Failed to add ingredients to shopping list. Please try again.",
+        type: "error",
       });
-      setTimeout(() => setNotification({ show: false, message: '', type: 'error' }), 5000);
+      setTimeout(
+        () => setNotification({ show: false, message: "", type: "error" }),
+        5000
+      );
     } finally {
       setIsAddingToList(false);
     }
@@ -70,20 +80,22 @@ export function RecipeDetailsClient({ recipe: initialRecipe }: Props) {
     <div className="max-w-5xl mx-auto px-4 py-6">
       {/* Notification Toast */}
       {notification.show && (
-        <div className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg animate-slide-in ${
-          notification.type === 'success' 
-            ? 'bg-green-500 text-white' 
-            : 'bg-red-500 text-white'
-        }`}>
+        <div
+          className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg animate-slide-in ${
+            notification.type === "success"
+              ? "bg-green-500 text-white"
+              : "bg-red-500 text-white"
+          }`}
+        >
           <div className="flex items-start gap-3">
             <span className="text-2xl shrink-0">
-              {notification.type === 'success' ? '✓' : '✗'}
+              {notification.type === "success" ? "✓" : "✗"}
             </span>
             <div className="flex-1">
               <p className="font-medium">{notification.message}</p>
-              {notification.type === 'success' && (
+              {notification.type === "success" && (
                 <button
-                  onClick={() => router.push('/shoppinglist')}
+                  onClick={() => router.push("/shoppinglist")}
                   className="mt-2 text-sm underline hover:no-underline"
                 >
                   View Shopping List →
@@ -91,7 +103,9 @@ export function RecipeDetailsClient({ recipe: initialRecipe }: Props) {
               )}
             </div>
             <button
-              onClick={() => setNotification({ show: false, message: '', type: 'success' })}
+              onClick={() =>
+                setNotification({ show: false, message: "", type: "success" })
+              }
               className="hover:bg-white/20 rounded-full p-1 transition-colors shrink-0"
             >
               <span className="text-xl">×</span>
@@ -123,9 +137,9 @@ export function RecipeDetailsClient({ recipe: initialRecipe }: Props) {
               onClick={handleToggleSave}
               disabled={isPending}
               className="text-4xl hover:scale-110 transition-transform disabled:opacity-50"
-              title={recipe.isSaved ? 'Remove from saved' : 'Save recipe'}
+              title={recipe.isSaved ? "Remove from saved" : "Save recipe"}
             >
-              {recipe.isSaved ? '❤️' : '🤍'}
+              {recipe.isSaved ? "❤️" : "🤍"}
             </button>
           </div>
 
@@ -141,7 +155,7 @@ export function RecipeDetailsClient({ recipe: initialRecipe }: Props) {
                 ❤️ Saved
               </span>
             )}
-            {recipe.source === 'AI Generated' && (
+            {recipe.source === "AI Generated" && (
               <span className="bg-linear-to-r from-purple-100 to-pink-100 text-purple-700 px-3 py-1 rounded-full font-medium">
                 ✨ AI Generated
               </span>
@@ -192,9 +206,7 @@ export function RecipeDetailsClient({ recipe: initialRecipe }: Props) {
           <ul className="space-y-3">
             {recipe.ingredients.map((ingredient, idx) => (
               <li key={idx} className="flex items-start">
-                <span className="text-green-500 mr-3 mt-1 shrink-0">
-                  ✓
-                </span>
+                <span className="text-green-500 mr-3 mt-1 shrink-0">✓</span>
                 <span className="flex-1 text-gray-700">{ingredient}</span>
               </li>
             ))}
@@ -239,13 +251,6 @@ export function RecipeDetailsClient({ recipe: initialRecipe }: Props) {
           )}
         </button>
         <button
-          onClick={() => router.push('/recipes?action=generate')}
-          className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors shadow-md hover:shadow-lg flex items-center gap-2"
-        >
-          <span>✨</span>
-          Generate Similar
-        </button>
-        <button
           onClick={() => window.print()}
           className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors shadow-md hover:shadow-lg flex items-center gap-2"
         >
@@ -264,7 +269,7 @@ export function RecipeDetailsClient({ recipe: initialRecipe }: Props) {
             background: white;
           }
         }
-        
+
         @keyframes slide-in {
           from {
             transform: translateX(100%);
@@ -275,7 +280,7 @@ export function RecipeDetailsClient({ recipe: initialRecipe }: Props) {
             opacity: 1;
           }
         }
-        
+
         .animate-slide-in {
           animation: slide-in 0.3s ease-out;
         }

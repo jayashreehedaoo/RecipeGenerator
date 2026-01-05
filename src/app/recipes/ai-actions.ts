@@ -5,6 +5,7 @@ import { getDb, schema } from "@/db";
 import {
   generateRecipeFromInventory,
   extractRecipeFromUrl,
+  extractRecipeFromText,
 } from "@/lib/gemini/recipe-generator";
 
 /**
@@ -146,9 +147,53 @@ export async function extractRecipeFromUrlAction(
   contentText?: string
 ) {
   try {
-    console.log("[Action] Extracting recipe from URL:", url);
+    console.log(
+      "[Action] Extracting recipe from URL:",
+      url,
+      "Has text:",
+      !!contentText
+    );
 
-    // Validate URL format
+    // If manual text is provided, use text extraction instead
+    if (contentText && contentText.trim().length > 50) {
+      console.log("[Action] Using manual text extraction");
+      const extractedRecipe = await extractRecipeFromText(contentText, url);
+
+      // Save to database
+      const db = await getDb();
+      const now = Date.now();
+
+      await db.insert(schema.recipes).values({
+        name: extractedRecipe.name,
+        ingredients: extractedRecipe.ingredients.join("\n"),
+        instructions: extractedRecipe.instructions.join("\n"),
+        prepTime: extractedRecipe.prepTime,
+        cookTime: extractedRecipe.cookTime,
+        servings: extractedRecipe.servings,
+        calories: extractedRecipe.calories,
+        category: extractedRecipe.category || "Main Course",
+        cuisine: extractedRecipe.cuisine || "",
+        source: "Instagram (Pasted)", // Indicate it was manually pasted
+        isSaved: false,
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      console.log(
+        "[Action] Recipe extracted from text and saved:",
+        extractedRecipe.name
+      );
+      revalidatePath("/recipes");
+
+      return {
+        success: true,
+        recipe: {
+          name: extractedRecipe.name,
+        },
+      };
+    }
+
+    // Validate URL format for scraping
     try {
       const urlObj = new URL(url);
       const isYouTube =
@@ -170,7 +215,6 @@ export async function extractRecipeFromUrlAction(
     }
 
     // Extract recipe using Gemini (with scraper integration)
-    // Note: contentText is kept for backward compatibility but not used by the scraper
     const extractedRecipe = await extractRecipeFromUrl(url);
 
     // Save to database

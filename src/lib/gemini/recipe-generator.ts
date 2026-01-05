@@ -258,3 +258,83 @@ Respond ONLY with valid JSON (no markdown, no code blocks):
     throw new Error("Invalid recipe format from AI. Please try again.");
   }
 }
+
+/**
+ * Extract recipe from pasted text (Instagram caption, blog post, etc.)
+ */
+export async function extractRecipeFromText(
+  text: string,
+  source: string = "Pasted Text"
+): Promise<GeneratedRecipe> {
+  console.log("[Gemini AI] Extracting recipe from text...", {
+    textLength: text.length,
+  });
+
+  if (!text || text.length < 50) {
+    throw new Error(
+      "Text is too short. Please paste the full recipe content including ingredients and instructions."
+    );
+  }
+
+  const genAI = getGemini();
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+  const prompt = `Extract the recipe from this content:
+
+${text.slice(0, 8000)} // Limit content length
+
+Parse and structure the recipe information:
+- Recipe name and description
+- Prep time and cook time (in minutes)
+- Number of servings
+- Difficulty level (Easy, Medium, or Hard)
+- Cuisine type
+- Category (Breakfast, Lunch, Dinner, or Snack)
+- Complete list of ingredients with quantities
+- Step-by-step instructions
+- Estimated calories per serving
+
+If information is missing, make reasonable estimates based on similar recipes.
+
+Respond ONLY with valid JSON (no markdown, no code blocks):
+{
+  "name": "Recipe Name",
+  "description": "Brief description",
+  "prepTime": 15,
+  "cookTime": 30,
+  "servings": 4,
+  "difficulty": "Medium",
+  "cuisine": "Italian",
+  "category": "Dinner",
+  "ingredients": ["2 cups flour", "1 tsp salt"],
+  "instructions": ["Step 1", "Step 2"],
+  "calories": 350
+}`;
+
+  const result = await model.generateContent(prompt);
+  const response = result.response;
+  const responseText = response.text();
+
+  if (!responseText) {
+    throw new Error("Failed to extract recipe from text");
+  }
+
+  try {
+    // Clean and parse response
+    let cleanContent = responseText.trim();
+    if (cleanContent.startsWith("```")) {
+      cleanContent = cleanContent
+        .replace(/```json\n?/g, "")
+        .replace(/```\n?/g, "")
+        .trim();
+    }
+
+    const recipe = JSON.parse(cleanContent) as GeneratedRecipe;
+    console.log("[Gemini AI] Recipe extracted from text:", recipe.name);
+    return recipe;
+  } catch (error) {
+    console.error("[Gemini AI] Failed to parse response:", error);
+    console.error("[Gemini AI] Raw response:", responseText);
+    throw new Error("Invalid recipe format from AI. Please try again.");
+  }
+}

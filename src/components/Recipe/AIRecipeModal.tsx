@@ -13,7 +13,7 @@ interface AIRecipeModalProps {
   onSuccess: () => void;
 }
 
-type Mode = "inventory" | "url";
+type Mode = "inventory" | "url" | "instagram";
 
 export function AIRecipeModal({
   isOpen,
@@ -34,6 +34,9 @@ export function AIRecipeModal({
 
   // State for URL extraction
   const [url, setUrl] = useState("");
+
+  // State for Instagram text paste
+  const [instagramText, setInstagramText] = useState("");
 
   const handleGenerateFromInventory = async () => {
     setIsLoading(true);
@@ -98,12 +101,46 @@ export function AIRecipeModal({
     }
   };
 
+  const handleExtractFromInstagram = async () => {
+    if (!instagramText.trim()) {
+      setError("Please paste the Instagram recipe caption");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Send the text directly to the extraction action with a dummy URL
+      const result = await extractRecipeFromUrlAction(
+        "https://instagram.com/text-paste",
+        instagramText
+      );
+
+      if (result.success) {
+        onSuccess();
+        onClose();
+        // Reset form
+        setInstagramText("");
+      } else {
+        setError(result.error || "Failed to extract recipe");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (mode === "inventory") {
       handleGenerateFromInventory();
-    } else {
+    } else if (mode === "url") {
       handleExtractFromUrl();
+    } else {
+      handleExtractFromInstagram();
     }
   };
 
@@ -135,11 +172,11 @@ export function AIRecipeModal({
         </div>
 
         {/* Mode Selection Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="grid grid-cols-3 gap-2 mb-6">
           <button
             type="button"
             onClick={() => setMode("inventory")}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+            className={`py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
               mode === "inventory"
                 ? "bg-purple-500 text-white shadow-md"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -147,12 +184,12 @@ export function AIRecipeModal({
             disabled={isLoading}
           >
             <Sparkles size={20} />
-            From Inventory
+            Inventory
           </button>
           <button
             type="button"
             onClick={() => setMode("url")}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+            className={`py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
               mode === "url"
                 ? "bg-purple-500 text-white shadow-md"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -160,7 +197,19 @@ export function AIRecipeModal({
             disabled={isLoading}
           >
             <LinkIcon size={20} />
-            From URL
+            YouTube
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("instagram")}
+            className={`py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+              mode === "instagram"
+                ? "bg-purple-500 text-white shadow-md"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+            disabled={isLoading}
+          >
+            📸 Instagram
           </button>
         </div>
 
@@ -269,33 +318,68 @@ export function AIRecipeModal({
                 </div>
               </div>
             </>
-          ) : (
+          ) : mode === "url" ? (
             <>
-              {/* URL Mode */}
+              {/* URL Mode - YouTube */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                 <p className="text-sm text-blue-800">
                   <LinkIcon className="inline mr-1" size={16} />
-                  Paste a YouTube or Instagram recipe URL. AI will automatically
-                  fetch and extract the recipe for you.
+                  Paste a YouTube recipe video URL. AI will automatically fetch
+                  and extract the recipe.
                 </p>
               </div>
 
               {/* Recipe URL */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Recipe URL *
+                  YouTube Video URL *
                 </label>
                 <input
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="https://youtube.com/watch?v=... or https://instagram.com/p/..."
+                  placeholder="https://youtube.com/watch?v=..."
                   required
                   disabled={isLoading}
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  💡 Supports: YouTube videos and Instagram posts with recipes
+                  💡 Works best with recipe channels like Tasty, Bon Appétit,
+                  etc.
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Instagram Mode - Manual Paste */}
+              <div className="bg-pink-50 border border-pink-200 rounded-lg p-4 mb-4">
+                <p className="text-sm text-pink-800">
+                  📸 Instagram blocks automated scraping. Copy the recipe
+                  caption/text from Instagram and paste it below.
+                </p>
+                <p className="text-xs text-pink-700 mt-2">
+                  💡 Tip: Open Instagram → Find recipe post → Copy all the text
+                  → Paste here
+                </p>
+              </div>
+
+              {/* Instagram Text Paste */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Instagram Recipe Text *
+                </label>
+                <textarea
+                  value={instagramText}
+                  onChange={(e) => setInstagramText(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                  placeholder="Paste the full Instagram recipe caption here, including ingredients and instructions..."
+                  rows={12}
+                  required
+                  disabled={isLoading}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  ✨ AI will extract and structure the recipe from your pasted
+                  text
                 </p>
               </div>
             </>
@@ -319,12 +403,16 @@ export function AIRecipeModal({
               {isLoading ? (
                 <>
                   <Loader2 className="animate-spin" size={20} />
-                  Generating...
+                  {mode === "instagram" ? "Extracting..." : "Generating..."}
                 </>
               ) : (
                 <>
                   <Sparkles size={20} />
-                  {mode === "inventory" ? "Generate Recipe" : "Extract Recipe"}
+                  {mode === "inventory"
+                    ? "Generate Recipe"
+                    : mode === "instagram"
+                    ? "Extract from Text"
+                    : "Extract from URL"}
                 </>
               )}
             </button>
