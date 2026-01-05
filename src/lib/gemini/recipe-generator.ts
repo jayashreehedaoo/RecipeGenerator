@@ -1,5 +1,11 @@
 import { getGemini } from "./client";
 import { InventoryItem } from "@/types/recipe-generator";
+import {
+  extractInstagramPostId,
+  extractYouTubeVideoId,
+  fetchInstagramContent,
+  fetchYouTubeContent,
+} from "./scraper";
 
 // AI response format (doesn't include DB fields)
 export interface GeneratedRecipe {
@@ -92,7 +98,9 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
     // Remove markdown code blocks if present
     let cleanContent = content.trim();
     if (cleanContent.startsWith("```")) {
-      cleanContent = cleanContent.replace(/```json\n?/g, "").replace(/```\n?/g, "");
+      cleanContent = cleanContent
+        .replace(/```json\n?/g, "")
+        .replace(/```\n?/g, "");
     }
 
     // Parse JSON response
@@ -108,25 +116,94 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
 /**
  * Extract recipe from a URL (blog, YouTube, Instagram) using Gemini
  */
-export async function extractRecipeFromUrl(
-  url: string,
-  contentText?: string
-): Promise<GeneratedRecipe> {
-  console.log("[Gemini AI] Extracting recipe from URL...", {
-    url,
-    hasContent: !!contentText,
-  });
+function detectPlatform(url: string): "youtube" | "instagram" | "unsupported" {
+  // YouTube URL patterns
+  const youtubeRegex =
+    /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}/i;
+  // Instagram URL patterns
+  const instagramRegex =
+    /^(?:https?:\/\/)?(?:www\.)?instagram\.com\/(p|reel|tv)\/[\w-]+/i;
 
+  if (youtubeRegex.test(url)) {
+    return "youtube";
+  }
+  if (instagramRegex.test(url)) {
+    return "instagram";
+  }
+  return "unsupported";
+}
+
+export async function extractRecipeFromUrl(
+  url: string
+): Promise<GeneratedRecipe> {
+  console.log("[Gemini AI] Extracting recipe from URL...", { url });
+
+  // Detect platform
+  const platform = detectPlatform(url);
+
+  if (platform === "unsupported") {
+    throw new Error(
+      "Unsupported URL. Please use YouTube or Instagram recipe URLs only."
+    );
+  }
+
+  let content = "";
+
+  // Fetch content based on platform
+  if (platform === "youtube") {
+    const videoId = extractYouTubeVideoId(url);
+    if (!videoId) {
+      throw new Error("Invalid YouTube URL");
+    }
+
+    const videoData = await fetchYouTubeContent(videoId);
+    content = `
+Title: ${videoData.title}
+Channel: ${videoData.channelTitle}
+
+Description:
+${videoData.description}
+    `.trim();
+
+    console.log("[Gemini AI] Fetched YouTube content:", {
+      title: videoData.title,
+      descriptionLength: videoData.description.length,
+    });
+  } else if (platform === "instagram") {
+    const postId = extractInstagramPostId(url);
+    if (!postId) {
+      throw new Error("Invalid Instagram URL");
+    }
+
+    const postData = await fetchInstagramContent(postId);
+    content = `
+Instagram Post by @${postData.username}
+
+Caption:
+${postData.caption}
+    `.trim();
+
+    console.log("[Gemini AI] Fetched Instagram content:", {
+      username: postData.username,
+      captionLength: postData.caption.length,
+    });
+  }
+
+  if (!content || content.length < 50) {
+    throw new Error(
+      "Could not extract enough content from the URL. The post may be private or have no recipe information."
+    );
+  }
+
+  // Send to Gemini for extraction
   const genAI = getGemini();
   const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
-  const prompt = `Extract the recipe from this ${
-    contentText ? "content" : "URL"
-  }:
+  const prompt = `Extract the recipe from this ${platform.toUpperCase()} content:
 
-${contentText || url}
+${content.slice(0, 8000)} // Limit content length
 
-Extract and structure the recipe information:
+Parse and structure the recipe information:
 - Recipe name and description
 - Prep time and cook time (in minutes)
 - Number of servings
@@ -139,13 +216,13 @@ Extract and structure the recipe information:
 
 If information is missing, make reasonable estimates based on similar recipes.
 
-Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
+Respond ONLY with valid JSON (no markdown, no code blocks):
 {
   "name": "Recipe Name",
   "description": "Brief description",
   "prepTime": 15,
   "cookTime": 30,
-  "servings": 4,
+  "servings": 2,
   "difficulty": "Medium",
   "cuisine": "Italian",
   "category": "Dinner",
@@ -156,19 +233,20 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
 
   const result = await model.generateContent(prompt);
   const response = result.response;
-  const content = response.text();
+  const text = response.text();
 
-  if (!content) {
-    throw new Error("No response from Gemini");
+  if (!text) {
+    throw new Error("Failed to extract recipe from URL");
   }
 
-  console.log("[Gemini AI] Raw response:", content);
-
   try {
-    // Remove markdown code blocks if present
-    let cleanContent = content.trim();
+    // Clean and parse response
+    let cleanContent = text.trim();
     if (cleanContent.startsWith("```")) {
-      cleanContent = cleanContent.replace(/```json\n?/g, "").replace(/```\n?/g, "");
+      cleanContent = cleanContent
+        .replace(/```json\n?/g, "")
+        .replace(/```\n?/g, "")
+        .trim();
     }
 
     const recipe = JSON.parse(cleanContent) as GeneratedRecipe;
@@ -176,6 +254,7 @@ Respond ONLY with valid JSON in this exact format (no markdown, no code blocks):
     return recipe;
   } catch (error) {
     console.error("[Gemini AI] Failed to parse response:", error);
+    console.error("[Gemini AI] Raw response:", text);
     throw new Error("Invalid recipe format from AI. Please try again.");
   }
 }

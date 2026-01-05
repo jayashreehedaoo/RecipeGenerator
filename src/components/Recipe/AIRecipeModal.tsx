@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { X, Sparkles, Link as LinkIcon, Loader2 } from 'lucide-react';
+import { useState } from "react";
+import { X, Sparkles, Link as LinkIcon, Loader2 } from "lucide-react";
 import {
   generateRecipeFromInventoryAction,
   extractRecipeFromUrlAction,
-} from '@/app/recipes/ai-actions';
+} from "@/app/recipes/ai-actions";
 
 interface AIRecipeModalProps {
   isOpen: boolean;
@@ -13,28 +13,27 @@ interface AIRecipeModalProps {
   onSuccess: () => void;
 }
 
-type Mode = 'inventory' | 'url';
+type Mode = "inventory" | "url";
 
 export function AIRecipeModal({
   isOpen,
   onClose,
   onSuccess,
 }: AIRecipeModalProps) {
-  const [mode, setMode] = useState<Mode>('inventory');
+  const [mode, setMode] = useState<Mode>("inventory");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // State for inventory-based generation
   const [preferences, setPreferences] = useState({
-    cuisine: '',
-    difficulty: '',
-    dietary: '',
-    maxPrepTime: '',
+    cuisine: "",
+    difficulty: "",
+    dietary: "",
+    maxPrepTime: "",
   });
 
   // State for URL extraction
-  const [url, setUrl] = useState('');
-  const [contentText, setContentText] = useState('');
+  const [url, setUrl] = useState("");
 
   const handleGenerateFromInventory = async () => {
     setIsLoading(true);
@@ -55,16 +54,16 @@ export function AIRecipeModal({
         onClose();
         // Reset form
         setPreferences({
-          cuisine: '',
-          difficulty: '',
-          dietary: '',
-          maxPrepTime: '',
+          cuisine: "",
+          difficulty: "",
+          dietary: "",
+          maxPrepTime: "",
         });
       } else {
-        setError(result.error || 'Failed to generate recipe');
+        setError(result.error || "Failed to generate recipe");
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      setError("An unexpected error occurred");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -73,7 +72,7 @@ export function AIRecipeModal({
 
   const handleExtractFromUrl = async () => {
     if (!url.trim()) {
-      setError('Please enter a URL');
+      setError("Please enter a URL");
       return;
     }
 
@@ -81,22 +80,18 @@ export function AIRecipeModal({
     setError(null);
 
     try {
-      const result = await extractRecipeFromUrlAction(
-        url,
-        contentText || undefined
-      );
+      const result = await extractRecipeFromUrlAction(url);
 
       if (result.success) {
         onSuccess();
         onClose();
         // Reset form
-        setUrl('');
-        setContentText('');
+        setUrl("");
       } else {
-        setError(result.error || 'Failed to extract recipe');
+        setError(result.error || "Failed to extract recipe");
       }
     } catch (err) {
-      setError('An unexpected error occurred');
+      setError("An unexpected error occurred");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -105,7 +100,7 @@ export function AIRecipeModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (mode === 'inventory') {
+    if (mode === "inventory") {
       handleGenerateFromInventory();
     } else {
       handleExtractFromUrl();
@@ -143,11 +138,11 @@ export function AIRecipeModal({
         <div className="flex gap-2 mb-6">
           <button
             type="button"
-            onClick={() => setMode('inventory')}
+            onClick={() => setMode("inventory")}
             className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-              mode === 'inventory'
-                ? 'bg-purple-500 text-white shadow-md'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              mode === "inventory"
+                ? "bg-purple-500 text-white shadow-md"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
             disabled={isLoading}
           >
@@ -156,11 +151,11 @@ export function AIRecipeModal({
           </button>
           <button
             type="button"
-            onClick={() => setMode('url')}
+            onClick={() => setMode("url")}
             className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-              mode === 'url'
-                ? 'bg-purple-500 text-white shadow-md'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              mode === "url"
+                ? "bg-purple-500 text-white shadow-md"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
             disabled={isLoading}
           >
@@ -177,7 +172,7 @@ export function AIRecipeModal({
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {mode === 'inventory' ? (
+          {mode === "inventory" ? (
             <>
               {/* Inventory Mode */}
               <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
@@ -198,7 +193,10 @@ export function AIRecipeModal({
                     type="text"
                     value={preferences.cuisine}
                     onChange={(e) =>
-                      setPreferences({ ...preferences, cuisine: e.target.value })
+                      setPreferences({
+                        ...preferences,
+                        cuisine: e.target.value,
+                      })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     placeholder="e.g., Italian, Mexican, Asian"
@@ -238,7 +236,10 @@ export function AIRecipeModal({
                     type="text"
                     value={preferences.dietary}
                     onChange={(e) =>
-                      setPreferences({ ...preferences, dietary: e.target.value })
+                      setPreferences({
+                        ...preferences,
+                        dietary: e.target.value,
+                      })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     placeholder="e.g., Vegetarian, Vegan, Gluten-free"
@@ -274,8 +275,8 @@ export function AIRecipeModal({
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                 <p className="text-sm text-blue-800">
                   <LinkIcon className="inline mr-1" size={16} />
-                  Paste a URL from a blog post, YouTube video, or Instagram
-                  reel. AI will extract the recipe for you.
+                  Paste a YouTube or Instagram recipe URL. AI will automatically
+                  fetch and extract the recipe for you.
                 </p>
               </div>
 
@@ -289,29 +290,12 @@ export function AIRecipeModal({
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="https://example.com/recipe or youtube.com/watch?v=..."
+                  placeholder="https://youtube.com/watch?v=... or https://instagram.com/p/..."
                   required
                   disabled={isLoading}
                 />
-              </div>
-
-              {/* Optional Content Text */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Or Paste Recipe Text{' '}
-                  <span className="text-gray-500">(Optional)</span>
-                </label>
-                <textarea
-                  value={contentText}
-                  onChange={(e) => setContentText(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-                  placeholder="If you've copied the recipe text, paste it here for better accuracy..."
-                  rows={6}
-                  disabled={isLoading}
-                />
                 <p className="text-xs text-gray-500 mt-1">
-                  💡 Tip: If the URL doesn&apos;t work well, try copying the recipe
-                  text and pasting it here instead.
+                  💡 Supports: YouTube videos and Instagram posts with recipes
                 </p>
               </div>
             </>
@@ -340,9 +324,7 @@ export function AIRecipeModal({
               ) : (
                 <>
                   <Sparkles size={20} />
-                  {mode === 'inventory'
-                    ? 'Generate Recipe'
-                    : 'Extract Recipe'}
+                  {mode === "inventory" ? "Generate Recipe" : "Extract Recipe"}
                 </>
               )}
             </button>
